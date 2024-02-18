@@ -1,0 +1,11 @@
+
+
+
+TWO SCHOOLS OF THOUGHT:
+
+	COMMON- one thread
+		- easy to do 
+		- what we have been doing up until now 
+		- gets very big and unruly
+
+
