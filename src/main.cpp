@@ -1,5 +1,46 @@
 #include "cghs/cghs.h"
 
+/* ========================================================================== */
+/*                                    Ports                                   */
+/* ========================================================================== */
+
+#define PORT_LAUNCHER 	5
+#define PORT_INTAKE 	6
+
+// Chassis (negatives can reverse)
+#define PORT_CHASSIS_L_F 1
+#define PORT_CHASSIS_L_M -2
+
+
+
+/* ========================================================================== */
+/*                                   Chassis                                  */
+/* ========================================================================== */
+ez::Drive chassis(
+
+	// Left Chassis Ports (negative port will reverse it!)
+	//   the first port is the sensored port (when trackers are not used!)
+	{ 1, -2, 3 }
+
+	// Right Chassis Ports (negative port will reverse it!)
+	//   the first port is the sensored port (when trackers are not used!)
+	, { -4, 5, -6 }
+
+	// IMU Port
+	, 7
+
+	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
+	, 2.725
+
+	// Cartridge RPM
+	, 600
+
+	// External Gear Ratio (MUST BE DECIMAL)
+	// eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
+	// eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
+	, 2.333
+
+);
 
 /* ========================================================================== */
 /*                                 Initialize                                 */
@@ -73,6 +114,9 @@ void opcontrol() {
 	// This is preference to what you like to drive on
 	chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
+	cghs::Motor launcher_Motor(PORT_LAUNCHER, pros::E_MOTOR_GEAR_BLUE, false, pros::E_MOTOR_ENCODER_DEGREES);
+	cghs::Motor intake_Motor(PORT_INTAKE, pros::E_MOTOR_GEAR_BLUE, false, pros::E_MOTOR_ENCODER_DEGREES);
+
 	while (true) {
 
 		// PID Tuner
@@ -93,11 +137,15 @@ void opcontrol() {
 		}
 
 
+		intake_Motor.set_speed_percent(50);
+		launcher_Motor.toggle(master.get_digital_new_press(DIGITAL_A));
+
+		intake_Motor.set_speed_rpm(300);
+		intake_Motor.spin(master.get_digital(DIGITAL_B));
+
 
 
 		chassis.opcontrol_tank(); // Tank control
-
-
 
 		pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
 	}
