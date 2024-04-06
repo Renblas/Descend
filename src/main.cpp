@@ -4,12 +4,24 @@
 /*                                    Ports                                   */
 /* ========================================================================== */
 
-#define PORT_LAUNCHER 	5
-#define PORT_INTAKE 	6
+#define PORT_INTAKE 	7
 
 // Chassis (negatives can reverse)
-#define PORT_CHASSIS_L_F 1
-#define PORT_CHASSIS_L_M -2
+#define PORT_CHASSIS_L_F 11
+#define PORT_CHASSIS_L_M 2
+#define PORT_CHASSIS_L_B 3
+
+#define PORT_CHASSIS_R_F -4
+#define PORT_CHASSIS_R_M -16
+#define PORT_CHASSIS_R_B -6
+
+#define PORT_FRONT_FLAPS 'A'
+
+#define PORT_BACK_FLAPS 'B'
+
+#define PORT_PTL_PISTON 'c'
+
+
 
 
 
@@ -20,17 +32,17 @@ ez::Drive chassis(
 
 	// Left Chassis Ports (negative port will reverse it!)
 	//   the first port is the sensored port (when trackers are not used!)
-	{ 1, -2, 3 }
+	{ -11, -2, -3 }
 
 	// Right Chassis Ports (negative port will reverse it!)
 	//   the first port is the sensored port (when trackers are not used!)
-	, { -4, 5, -6 }
+	, { 4, 16, 6 }
 
 	// IMU Port
 	, 7
 
 	// Wheel Diameter (Remember, 4" wheels are actually 4.125!)
-	, 2.725
+	, 2.75
 
 	// Cartridge RPM
 	, 600
@@ -38,7 +50,7 @@ ez::Drive chassis(
 	// External Gear Ratio (MUST BE DECIMAL)
 	// eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
 	// eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-	, 2.333
+	, 0.75
 
 );
 
@@ -111,42 +123,86 @@ void autonomous() {
 /* ========================================================================== */
 void opcontrol() {
 
+	/*
+		Setup
+	*/
+
 	// This is preference to what you like to drive on
 	chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
-	cghs::Motor launcher_Motor(PORT_LAUNCHER, pros::E_MOTOR_GEAR_BLUE, false, pros::E_MOTOR_ENCODER_DEGREES);
+	// Device Declarations / definitions
 	cghs::Motor intake_Motor(PORT_INTAKE, pros::E_MOTOR_GEAR_BLUE, false, pros::E_MOTOR_ENCODER_DEGREES);
 
+			//Pneumatics stuffs
+	ez::Piston front_flaps(PORT_FRONT_FLAPS, false);
+	ez::Piston back_flaps(PORT_BACK_FLAPS, false);
+	ez::Piston PTL_piston(PORT_PTL_PISTON, false);
+
+	/*
+		While True
+	*/
 	while (true) {
 
 		// PID Tuner
 		// After you find values that you're happy with, you'll have to set them in auton.cpp
-		if (!pros::competition::is_connected()) {
+		if (!pros::competition::is_connected() && false) {
 			// Enable / Disable PID Tuner
 			//  When enabled: 
 			//  * use A and Y to increment / decrement the constants
 			//  * use the arrow keys to navigate the constants
 			if (master.get_digital_new_press(DIGITAL_X))
 				chassis.pid_tuner_toggle();
-
 			// Trigger the selected autonomous routine
 			if (master.get_digital_new_press(DIGITAL_B))
 				autonomous();
-
 			chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
 		}
+		/*
+		*	IF USING get_digital_new_press() FOR MORE THAN ONE MOTOR / PISTON, MAKE SURE TO STORE IN INTERMIDIATE VARIABLE
+		*
+		* 	bool flaps_enabled = master.get_digital_new_press(DIGITAL_A)
+		* 	front_flaps.set(flaps_enabled);
+		*	back_flaps.set(flaps_enabled);
+		*/
+
+		// INTAKE //
+		intake_Motor.set_speed_percent(100);
+		intake_Motor.spin(master.get_digital(DIGITAL_R1));
+
+		// Front Flaps //
+	
+			bool flaps_enabled = master.get_digital_new_press(DIGITAL_A);
+			front_flaps.set(flaps_enabled);
+		back_flaps.set(flaps_enabled);
+	
+		
+		ez::Piston front_flaps(master.get_digital_new_press(DIGITAL_A));
+		ez::Piston back_flaps(master.get_digital_new_press(DIGITAL_Y));
+		ez::Piston PTL_piston(master.get_digital_new_press(DIGITAL_UP));
 
 
-		intake_Motor.set_speed_percent(50);
-		launcher_Motor.toggle(master.get_digital_new_press(DIGITAL_A));
-
-		intake_Motor.set_speed_rpm(300);
-		intake_Motor.spin(master.get_digital(DIGITAL_B));
-
-
-
-		chassis.opcontrol_tank(); // Tank control
+ 		// Tank control
+		chassis.opcontrol_tank();
 
 		pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-	}
+	
+
+
+		{
+			bool flaps_enabled = master.get_digital_new_press(DIGITAL_A);
+			front_flaps.set(flaps_enabled);
+			back_flaps.set(flaps_enabled);
+			
+		
+		ez::Piston front_flaps(master.get_digital_new_press(DIGITAL_R1));
+		ez::Piston back_flaps(master.get_digital_new_press(DIGITAL_R2));
+
+
+
+ 		// Tank control
+		chassis.opcontrol_tank();
+
+		pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
+		}
+}	
 }

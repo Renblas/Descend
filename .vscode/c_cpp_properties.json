@@ -5,25 +5,29 @@
       "includePath": [
         "${workspaceFolder}/**",
         "/home/renblas/programming/vexv5/Descend/include",
-        "c:\\Users\\caleb\\Desktop\\Programing\\Descend\\include"
+        "c:\\Users\\caleb\\Desktop\\Programing\\Descend\\include",
+        "/Users/robotics/Descend/include"
       ],
       "defines": [
         "_DEBUG",
         "UNICODE",
         "_UNICODE"
       ],
-      "compilerPath": "c:\\Users\\caleb\\AppData\\Roaming\\Code\\User\\globalStorage\\sigbots.pros\\install\\pros-toolchain-windows\\usr\\bin\\arm-none-eabi-g++",
+      "compilerPath": "/Users/robotics/Library/Application Support/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-macos/bin/arm-none-eabi-g++",
       "cStandard": "gnu11",
       "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
-      "compileCommands": "c:\\Users\\caleb\\Desktop\\Programing\\Descend\\compile_commands.json",
+      "compileCommands": "/Users/robotics/Descend/compile_commands.json",
       "browse": {
         "path": [
-          "c:\\Users\\caleb\\Desktop\\Programing\\Descend"
+          "/Users/robotics/Descend"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
-      }
+      },
+      "macFrameworkPath": [
+        "/System/Library/Frameworks"
+      ]
     }
   ],
   "version": 4

@@ -13,6 +13,8 @@ namespace cghs
 		bool has_init = false;
 		bool enabled = false;
 		int cur_speed = 100.0;
+		int input_port = 5;
+		bool default_state = false;
 
 		public:
 		using pros::Motor::Motor;
@@ -95,5 +97,8 @@ namespace cghs
 			return enabled;
 		}
 
+		//ez::Piston(int input_port, bool default_state = false){
+			
+		};
+
 	};
-}
