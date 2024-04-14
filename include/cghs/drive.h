@@ -7,17 +7,17 @@ namespace cghs::drive
 	ez::Drive chassis(
 		// Left Chassis Ports (negative port will reverse it!)
 		//   the first port is used as the sensor
-		{ 1, 2, 3 }
+		{ 11, 2, 3 }
 
 		// Right Chassis Ports (negative port will reverse it!)
 		//   the first port is used as the sensor
-		, { -4, -5, -6 }
+		, { -4, -16, -6 }
 
 		// IMU Port
 		, 7
 
 		// Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
-		, 3.25
+		, 2.75
 
 		// Cartridge RPM
 		, 600

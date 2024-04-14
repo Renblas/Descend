@@ -12,7 +12,7 @@ namespace cghs
 		private:
 		bool has_init = false;
 		bool enabled = false;
-		int cur_speed = 100.0;
+		int default_speed = 100.0;
 		int input_port = 5;
 		bool default_state = false;
 
@@ -34,6 +34,7 @@ namespace cghs
 			return (int)rpm;
 		}
 
+		
 		/**
 		 *@brief Converts rpm speed to percent based on current motor gearset
 		 *
@@ -55,7 +56,7 @@ namespace cghs
 		 * @param percent int 0-100
 		 */
 		void set_speed_percent(float percent) {
-			cur_speed = speed_percent_to_rpm(percent);
+			default_speed = speed_percent_to_rpm(percent);
 		}
 
 		/**
@@ -64,7 +65,7 @@ namespace cghs
 		 * @param rpm float 0-100, 0-200, or 0-300 based on motor
 		 */
 		void set_speed_rpm(float rpm) {
-			cur_speed = rpm;
+			default_speed = rpm;
 		}
 
 		/**
@@ -72,9 +73,17 @@ namespace cghs
 		 *
 		 * @param state whether to toggle this frame or not
 		 */
-		void toggle(bool state) {
+		void toggle(bool state, float speed = 256) {
+			if (speed == 256)
+				speed = default_speed;
+
 			if (state) enabled = !enabled;
-			if (enabled) move_velocity(speed_percent_to_rpm(cur_speed));
+
+			if (enabled) {
+				move_velocity(speed_percent_to_rpm(speed));
+			} else {
+				move_velocity(0);
+			}
 		}
 
 		/**
@@ -82,9 +91,18 @@ namespace cghs
 		 *
 		 * @param state
 		 */
-		void spin(bool state) {
+		void spin(bool state, float speed = 256) {
+			if (speed == 256)
+				speed = default_speed;
+
 			enabled = state;
-			if (enabled) move_velocity(speed_percent_to_rpm(cur_speed));
+			
+			if (enabled) {
+				move_velocity(speed_percent_to_rpm(speed));
+			} else{
+				move_velocity(0);
+			}
+
 		}
 
 		/**
@@ -102,3 +120,5 @@ namespace cghs
 		};
 
 	};
+
+#include "auton.h"
